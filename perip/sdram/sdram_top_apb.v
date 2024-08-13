@@ -18,15 +18,15 @@ module sdram_top_apb (
   output        sdram_ras,
   output        sdram_cas,
   output        sdram_we,
-  output [12:0] sdram_a,
+  output [13:0] sdram_a,
   output [ 1:0] sdram_ba,
-  output [ 1:0] sdram_dqm,
-  inout  [15:0] sdram_dq
+  output [ 3:0] sdram_dqm,
+  inout  [31:0] sdram_dq
 );
 
   wire sdram_dout_en;
-  wire [15:0] sdram_dout;
-  assign sdram_dq = sdram_dout_en ? sdram_dout : 16'bz;
+  wire [31:0] sdram_dout;
+  assign sdram_dq = sdram_dout_en ? sdram_dout : 32'bz;
 
   typedef enum [1:0] { ST_IDLE, ST_WAIT_ACCEPT, ST_WAIT_ACK } state_t;
   reg [1:0] state;
@@ -47,9 +47,9 @@ module sdram_top_apb (
   wire is_write = ((in_psel && !in_penable) || (state == ST_WAIT_ACCEPT)) &&  in_pwrite;
   sdram_axi_core #(
     .SDRAM_MHZ(100),
-    .SDRAM_ADDR_W(24),
-    .SDRAM_COL_W(9),
-    .SDRAM_READ_LATENCY(2)
+    .SDRAM_ADDR_W(26),
+    .SDRAM_COL_W(10),
+    .SDRAM_READ_LATENCY(1)
   ) u_sdram_ctrl(
     .clk_i(clock),
     .rst_i(reset),
